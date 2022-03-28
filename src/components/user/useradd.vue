@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 16:24:41
- * @LastEditTime: 2022-03-28 17:27:25
+ * @LastEditTime: 2022-03-28 20:38:12
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -20,12 +20,12 @@
           <el-input v-model="useradd.email"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="mobile">
-          <el-input v-model="useradd.xmobile"></el-input>
+          <el-input v-model="useradd.mobile"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addues">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -39,6 +39,9 @@ export default {
     centerDialogVisible: {
       type: Boolean,
     },
+    userlist: {
+      type: Function,
+    },
   },
   data() {
     var emlck = (rule, value, cb) => {
@@ -49,13 +52,28 @@ export default {
       }
       cb(new Error('请输入合法邮箱'))
     }
-    var modelck = (rule, value, cb) => {
-      const regmode = /0?(13|14|15|17|18|19)[0-9]{9}/
-      if (regmode.test(value)) {
-        return cb()
+    var isMobileNumber = (rule, value, callback) => {
+      if (!value) {
+        return new Error('请输入电话号码')
+      } else {
+        const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+        const isPhone = reg.test(value)
+        value = Number(value) //转换为数字
+        if (typeof value === 'number' && !isNaN(value)) {
+          //判断是否为数字
+          value = value.toString() //转换成字符串
+          if (value.length < 0 || value.length > 12 || !isPhone) {
+            //判断是否为11位手机号
+            callback(new Error('手机号码格式如:138xxxx8754'))
+          } else {
+            callback()
+          }
+        } else {
+          callback(new Error('请输入电话号码'))
+        }
       }
-      cb(new Error('请输入合法手机号'))
     }
+
     return {
       useradd: {
         username: '',
@@ -80,11 +98,8 @@ export default {
           },
         ],
         mobile: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          {
-            validator: modelck,
-            trigger: 'blur',
-          },
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { validator: isMobileNumber, trigger: 'blur' },
         ],
       },
     }
@@ -102,6 +117,16 @@ export default {
     },
     addDislogcl() {
       this.$refs.useraddref.resetFields()
+    },
+    addues() {
+      this.$refs.useraddref.validate(async valde => {
+        if (!valde) return
+        const { data: res } = await this.$http.post('users', this.useradd)
+        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+        this.$message.success(res.meta.msg)
+        this.centerDialogVisible = false
+        this.userlist()
+      })
     },
   },
 }
