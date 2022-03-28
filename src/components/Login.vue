@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-27 19:34:31
- * @LastEditTime: 2022-03-28 08:52:15
+ * @LastEditTime: 2022-03-28 15:52:31
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -42,8 +42,8 @@ export default {
   data() {
     return {
       from: {
-        username: '',
-        password: '',
+        username: 'admin',
+        password: '123456',
       },
       fromrules: {
         username: [

@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-27 19:16:56
- * @LastEditTime: 2022-03-28 09:54:40
+ * @LastEditTime: 2022-03-28 15:02:28
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -19,7 +19,7 @@ Vue.prototype.$http = axios
 // 添加请求拦截器
 axios.interceptors.request.use(
   function (config) {
-    console.log(config)
+    // console.log(config)
     config.headers.Authorization = window.sessionStorage.getItem('token')
     return config
   },

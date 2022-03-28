@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 08:28:26
- * @LastEditTime: 2022-03-28 11:17:46
+ * @LastEditTime: 2022-03-28 15:02:01
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -27,13 +27,14 @@
             :collapse="isCollapse"
             :collapse-transition="false"
             :router="true"
+            :default-active="avtivepath"
           >
             <el-submenu :index="item.id + ''" v-for="item in list" :key="item.id">
               <template slot="title">
                 <i :class="objinco[item.id]"></i>
                 <span>{{ item.authName }}</span>
               </template>
-              <el-menu-item :index="'/' + item.path + ''" v-for="ite in item.children" :key="ite.id">
+              <el-menu-item :index="'/' + item.path + ''" v-for="ite in item.children" :key="ite.id" @click="sevative('/' + item.path)">
                 <template slot="title">
                   <i class="el-icon-menu"></i>
                   <span>{{ ite.authName }}</span>
@@ -56,6 +57,7 @@ export default {
     return {
       isCollapse: false,
       list: [],
+      avtivepath: '',
       objinco: {
         125: 'el-icon-user-solid',
         103: 'el-icon-s-help',
@@ -67,6 +69,7 @@ export default {
   },
   created() {
     this.getlist()
+    this.avtivepath = window.sessionStorage.getItem('avtionpath')
   },
   methods: {
     Logout() {
@@ -78,10 +81,14 @@ export default {
       const { data: res } = await this.$http.get('menus')
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.list = res.data
-      console.log(this.list)
+      //   console.log(this.list)
     },
     spread() {
       this.isCollapse = !this.isCollapse
+    },
+    sevative(value) {
+      window.sessionStorage.setItem('avtionpath', value)
+      this.avtivepath = value
     },
   },
 }
