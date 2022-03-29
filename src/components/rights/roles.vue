@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-29 15:19:02
- * @LastEditTime: 2022-03-29 17:58:25
+ * @LastEditTime: 2022-03-29 20:39:00
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -27,30 +27,26 @@
                 v-for="(item, inds) in scope.row.children"
                 :span="5"
                 :class="['tag-button', inds === 0 ? 'tag-top' : '', 'val']"
-                :key="item.id"
+                :key="inds"
               >
                 <el-col :span="4"
-                  ><el-tag closable @click="disschaid(item.id)">{{ item.authName }}</el-tag>
+                  ><el-tag closable @close="removeid(scope.row, item.id)">{{ item.authName }}</el-tag>
                   <i class="el-icon-caret-right"></i>
                 </el-col>
                 <el-col :span="19">
-                  <el-row
-                    :class="['tag-button', inds2 === 0 ? 'tag-top' : '', 'val']"
-                    v-for="(itemm, inds2) in item.children"
-                    :key="itemm.id"
-                  >
+                  <el-row :class="['tag-button', inds2 === 0 ? 'tag-top' : '', 'val']" v-for="(itemm, inds2) in item.children" :key="inds2">
                     <el-col :span="6"
-                      ><el-tag @click="disschaid(itemm.id)" closable type="success">{{ itemm.authName }}</el-tag>
+                      ><el-tag closable type="success" @close="removeid(scope.row, itemm.id)">{{ itemm.authName }}</el-tag>
                       <i class="el-icon-caret-right"></i>
                     </el-col>
                     <el-col :span="16">
                       <el-tag
-                        @click="disschaid(item3.id)"
                         closable
                         type="warning"
                         :class="['tag-button', inds3 === 0 ? 'tag-top' : '']"
                         v-for="(item3, inds3) in itemm.children"
-                        :key="item3"
+                        :key="inds3"
+                        @close="removeid(scope.row, item3.id)"
                         >{{ item3.authName }}</el-tag
                       >
                     </el-col>
@@ -67,7 +63,7 @@
           <template>
             <el-button type="primary" size="mini" icon="el-icon-edit">编辑</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete">删除</el-button>
-            <el-button type="warning" size="mini" icon="el-icon-star-off">分配权限</el-button>
+            <el-button type="warning" size="mini" icon="el-icon-star-off" @click="showdiloag">分配权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -76,7 +72,7 @@
 </template>
 
 <script>
-import { roles } from '../../api/index'
+import { roles, removeid } from '../../api/index'
 export default {
   data() {
     return {
@@ -93,8 +89,24 @@ export default {
       this.roles = res.data
       console.log(res)
     },
-    disschaid(id) {
-      console.log(id)
+    async removeid(id, idd) {
+      console.log(id, idd)
+      const res = await this.$confirm('需要删除账号吗？', '提示', {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消删除',
+        type: 'warning',
+      }).catch(err => err)
+
+      if (res !== 'confirm') return this.$message.warning('取消删除成功')
+      //   console.log(id, idd)
+      const ress = await removeid(id.id, idd)
+      console.log(ress)
+      if (ress.meta.status !== 200) return this.$message.error(ress.meta.msg)
+      id.children = ress.data
+      this.$message.success(ress.meta.msg)
+    },
+    showdiloag() {
+      alert(1)
     },
   },
 }
