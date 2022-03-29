@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-27 19:16:56
- * @LastEditTime: 2022-03-28 11:22:00
+ * @LastEditTime: 2022-03-29 15:19:57
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -32,6 +32,16 @@ const routes = [
         path: '/users',
         name: 'users',
         component: () => import('../components/user/user.vue'),
+      },
+      {
+        path: '/rights',
+        name: 'Right',
+        component: () => import('../components/rights/index.vue'),
+      },
+      {
+        path: '/roles',
+        name: 'roles',
+        component: () => import('../components/rights/roles.vue'),
       },
     ],
   },

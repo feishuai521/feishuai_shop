@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 08:28:26
- * @LastEditTime: 2022-03-28 15:02:01
+ * @LastEditTime: 2022-03-29 15:17:28
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -34,7 +34,7 @@
                 <i :class="objinco[item.id]"></i>
                 <span>{{ item.authName }}</span>
               </template>
-              <el-menu-item :index="'/' + item.path + ''" v-for="ite in item.children" :key="ite.id" @click="sevative('/' + item.path)">
+              <el-menu-item :index="'/' + ite.path + ''" v-for="ite in item.children" :key="ite.id" @click="sevative('/' + ite.path)">
                 <template slot="title">
                   <i class="el-icon-menu"></i>
                   <span>{{ ite.authName }}</span>

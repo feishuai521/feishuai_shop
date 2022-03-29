@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 16:24:41
- * @LastEditTime: 2022-03-28 20:38:12
+ * @LastEditTime: 2022-03-29 11:19:26
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -35,14 +35,8 @@
 // import { consumers } from 'stream'
 
 export default {
-  props: {
-    centerDialogVisible: {
-      type: Boolean,
-    },
-    userlist: {
-      type: Function,
-    },
-  },
+  props: ['centerDialogVisible', 'userlist'],
+
   data() {
     var emlck = (rule, value, cb) => {
       const regemil =
@@ -124,8 +118,8 @@ export default {
         const { data: res } = await this.$http.post('users', this.useradd)
         if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
         this.$message.success(res.meta.msg)
-        this.centerDialogVisible = false
         this.userlist()
+        this.centerDialogVisible = false
       })
     },
   },

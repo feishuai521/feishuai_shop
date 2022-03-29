@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 11:20:46
- * @LastEditTime: 2022-03-29 11:09:24
+ * @LastEditTime: 2022-03-29 11:16:17
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -82,7 +82,7 @@
       >
       </el-pagination>
     </el-card>
-    <useradd-Vue :centerDialogVisible="center" />
+    <useradd-Vue :centerDialogVisible="center" :userlist="userlist" />
   </div>
 </template>
 
