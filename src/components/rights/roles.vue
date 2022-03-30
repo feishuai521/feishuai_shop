@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-29 15:19:02
- * @LastEditTime: 2022-03-29 20:39:00
+ * @LastEditTime: 2022-03-30 15:12:32
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -60,34 +60,59 @@
         <el-table-column prop="roleName" label="角色名称" width="180"> </el-table-column>
         <el-table-column prop="roleDesc" label="角色描述" width="180"> </el-table-column>
         <el-table-column label="操作">
-          <template>
+          <template slot-scope="scope">
             <el-button type="primary" size="mini" icon="el-icon-edit">编辑</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete">删除</el-button>
-            <el-button type="warning" size="mini" icon="el-icon-star-off" @click="showdiloag">分配权限</el-button>
+            <el-button type="warning" size="mini" icon="el-icon-star-off" @click="showdiloag(scope.row)">分配权限</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
+    <el-dialog title="权限分配" :visible.sync="allocati" width="50%" @close="allocatiact">
+      <el-tree
+        :data="allocationlist"
+        show-checkbox
+        default-expand-all
+        node-key="id"
+        :default-checked-keys="dekey"
+        ref="treeref"
+        :props="treeProps"
+      >
+      </el-tree>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="allocati = false">取 消</el-button>
+        <el-button type="primary" @click="acyiii">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { roles, removeid } from '../../api/index'
+import { roles, removeid, allocation, acyiiis } from '../../api/index'
 export default {
   data() {
     return {
       roles: [],
+      allocati: false,
+      allocationlist: [],
+      treeProps: {
+        label: 'authName',
+        children: 'children',
+      },
+      dekey: [],
+      raid: '',
     }
   },
   created() {
     this.roleslist()
+    // this.desfkey(this.roles, this.desfkey)
   },
   methods: {
     async roleslist() {
       const res = await roles()
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.roles = res.data
-      console.log(res)
+      // console.log(res)
     },
     async removeid(id, idd) {
       console.log(id, idd)
@@ -105,8 +130,33 @@ export default {
       id.children = ress.data
       this.$message.success(ress.meta.msg)
     },
-    showdiloag() {
-      alert(1)
+    async showdiloag(role) {
+      this.raid = role
+      const res = await allocation()
+      this.allocationlist = await res.data
+      await this.desfkey(role, this.dekey)
+      this.allocati = !this.allocati
+      // this.$message.success(res.msg)
+    },
+    desfkey(role, arr) {
+      // console.log(role, arr)
+      if (!role.children) {
+        return arr.push(role.id)
+      }
+      // console.log(arr)
+      role.children.forEach(element => this.desfkey(element, arr))
+    },
+    allocatiact() {
+      this.dekey = []
+    },
+    async acyiii() {
+      const key = [...this.$refs.treeref.getCheckedKeys(), ...this.$refs.treeref.getHalfCheckedKeys()]
+      const idag = key.join(',')
+      const arr = await acyiiis(this.raid.id, idag)
+      // 判断是否返回失败验证
+      Object.keys(arr).length == 1 ? this.$message.error(arr.msg) : this.$message.success(arr.msg)
+      this.roleslist()
+      this.allocati = !this.allocati
     },
   },
 }

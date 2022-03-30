@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 11:20:46
- * @LastEditTime: 2022-03-29 11:16:17
+ * @LastEditTime: 2022-03-30 16:10:02
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -47,7 +47,7 @@
               <el-button type="danger" icon="el-icon-delete" size="mini" @click="dateAccoun(scope.row.id)"></el-button>
             </el-tooltip>
             <el-tooltip content="分配" placement="top" :enterable="false">
-              <el-button type="warning" icon="el-icon-star-off" size="mini"></el-button>
+              <el-button type="warning" icon="el-icon-star-off" size="mini" @click="setrole(scope.row)"></el-button>
             </el-tooltip>
             <div>
               <el-dialog title="修改账号" :visible.sync="Account" @close="cosons">
@@ -67,6 +67,21 @@
                 </span>
               </el-dialog>
             </div>
+            <el-dialog title="分配角色" :visible.sync="isAssign" width="50%">
+              <div>
+                <p>当前用户：{{ userrow.username }}</p>
+                <p>当前角色：{{ userrow.role_name }}</p>
+                <p>
+                  分配角色：<el-select v-model="userid" placeholder="请选择">
+                    <el-option v-for="item in rolesist" :key="item.id" :label="item.roleName" :value="item.id"> </el-option>
+                  </el-select>
+                </p>
+              </div>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="isAssign = false">取 消</el-button>
+                <el-button type="primary" @click="sesidinfo">确 定</el-button>
+              </span>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -87,9 +102,11 @@
 </template>
 
 <script>
+import { rolesls, roleslsuser } from '../../api'
 // import AccountVue from './Account.vue'
 // import { log } from 'console'
 import useraddVue from './useradd.vue'
+// rolesls
 export default {
   name: 'users',
   components: { useraddVue },
@@ -131,8 +148,12 @@ export default {
       },
       uselist: [],
       todo: 0,
+      userid: '',
       center: false,
       Account: false,
+      isAssign: false,
+      userrow: {},
+      rolesist: [],
       userAcun: {},
       userAcuns: {
         email: [
@@ -217,6 +238,22 @@ export default {
       if (ress.meta.status !== 200) return this.$message.error(ress.meta.msg)
       this.userlist()
       this.$message.success(ress.meta.msg)
+    },
+    async setrole(row) {
+      this.isAssign = true
+      this.userrow = row
+      const res = await rolesls()
+      this.rolesist = res.data
+      Object.keys(res).length == 1 ? this.$message.error(res.msg) : this.$message.success(res.msg)
+
+      console.log(res)
+    },
+    async sesidinfo() {
+      if (!this.userid) return this.$message.error('请选择分配角色')
+      const res = await roleslsuser(this.userrow.id, this.userid)
+      Object.keys(res).length == 1 ? this.$message.error(res.msg) : this.$message.success(res.msg)
+      this.userlist()
+      this.isAssign = false
     },
   },
 }
