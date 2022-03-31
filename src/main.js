@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-27 19:16:56
- * @LastEditTime: 2022-03-28 15:02:28
+ * @LastEditTime: 2022-03-31 08:38:33
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -12,6 +12,9 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './assets/style.css'
+import ZkTable from 'vue-table-with-tree-grid'
+
+Vue.component('Zk-Table', ZkTable)
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 axios.defaults.baseURL = 'https://lianghj.top:8888/api/private/v1/'

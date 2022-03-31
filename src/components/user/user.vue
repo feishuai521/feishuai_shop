@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 11:20:46
- * @LastEditTime: 2022-03-30 16:10:02
+ * @LastEditTime: 2022-03-31 10:19:44
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -188,7 +188,8 @@ export default {
       //   console.log(`每页 ${val} 条`)
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.queryinfo.pagenum = val
+      this.userlist()
     },
     async userstate(val) {
       console.log(val)
