@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-29 15:33:29
- * @LastEditTime: 2022-03-31 10:35:16
+ * @LastEditTime: 2022-04-01 10:38:47
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -88,6 +88,45 @@ export async function categorieslist(dtas) {
   // console.log(dtas)
   const { data: res } = await axios.get('categories', dtas)
   if (res.meta.status !== 200)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+export async function categoriesadd(dtas) {
+  // console.log(dtas)
+
+  const { data: res } = await axios.post('categories', dtas)
+  // console.log(res)
+  if (res.meta.status !== 201)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+export async function categoriesacc(id, dtas) {
+  console.log(dtas)
+
+  const { data: res } = await axios.get(`categories/${id}/attributes`, dtas)
+  // console.log(res)
+  if (res.meta.status !== 200)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+export async function categoriesadds(id, dtas) {
+  const { data: res } = await axios.post(`categories/${id}/attributes`, dtas)
+  if (res.meta.status !== 201)
     return {
       msg: res.meta.msg,
     }

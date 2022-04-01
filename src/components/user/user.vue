@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-28 11:20:46
- * @LastEditTime: 2022-03-31 10:19:44
+ * @LastEditTime: 2022-03-31 19:21:10
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -82,6 +82,26 @@
                 <el-button type="primary" @click="sesidinfo">确 定</el-button>
               </span>
             </el-dialog>
+            <el-dialog title="添加用户" :visible.sync="center" width="70%" @close="addDislogcl">
+              <el-form label-width="80px" :model="useradd" :rules="useradds" ref="useraddref">
+                <el-form-item label="用户名称" prop="username">
+                  <el-input v-model="useradd.username"></el-input>
+                </el-form-item>
+                <el-form-item label="用户密码" prop="password">
+                  <el-input v-model="useradd.password"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" prop="email">
+                  <el-input v-model="useradd.email"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号" prop="mobile">
+                  <el-input v-model="useradd.mobile"></el-input>
+                </el-form-item>
+              </el-form>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="center = false">取 消</el-button>
+                <el-button type="primary" @click="addues">确 定</el-button>
+              </span>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -140,6 +160,7 @@ export default {
         }
       }
     }
+
     return {
       queryinfo: {
         query: '',
@@ -156,6 +177,33 @@ export default {
       rolesist: [],
       userAcun: {},
       userAcuns: {
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          {
+            validator: emlck,
+            trigger: 'blur',
+          },
+        ],
+        mobile: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { validator: isMobileNumber, trigger: 'blur' },
+        ],
+      },
+      useradd: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: '',
+      },
+      useradds: {
+        username: [
+          { required: true, message: '请输入账号名称', trigger: 'blur' },
+          { min: 5, max: 10, message: '长度在 5 到 10 个字符', trigger: 'blur' },
+        ],
+        password: [
+          { required: true, message: '请输入账号密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' },
+        ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           {
@@ -255,6 +303,19 @@ export default {
       Object.keys(res).length == 1 ? this.$message.error(res.msg) : this.$message.success(res.msg)
       this.userlist()
       this.isAssign = false
+    },
+    addDislogcl() {
+      this.$refs.useraddref.resetFields()
+    },
+    addues() {
+      this.$refs.useraddref.validate(async valde => {
+        if (!valde) return
+        const { data: res } = await this.$http.post('users', this.useradd)
+        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+        this.$message.success(res.meta.msg)
+        this.userlist()
+        this.center = false
+      })
     },
   },
 }

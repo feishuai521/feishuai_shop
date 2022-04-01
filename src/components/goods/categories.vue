@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-31 08:05:18
- * @LastEditTime: 2022-03-31 11:18:51
+ * @LastEditTime: 2022-03-31 19:41:01
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -55,7 +55,7 @@
       >
       </el-pagination>
     </el-card>
-    <el-dialog title="添加分类" :visible.sync="catadd" width="50%">
+    <el-dialog title="添加分类" :visible.sync="catadd" width="50%" @close="addScaties">
       <el-form :model="addcatfrom" :rules="addcatfroms" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="分类名称" prop="cat_name">
           <el-input v-model="addcatfrom.cat_name"></el-input>
@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { catelist, categorieslist } from '../../api'
+import { catelist, categorieslist, categoriesadd } from '../../api'
 
 export default {
   data() {
@@ -130,7 +130,7 @@ export default {
       Object.keys(res).length == 1 ? this.$message.error(res.msg) : ''
       this.catelist = res.data.result
       this.todal = res.data.total
-      console.log(res)
+      // console.log(res)
     },
     handleSizeChange(a) {
       this.qerinfo.pagesize = a
@@ -144,7 +144,7 @@ export default {
       this.catadd = true
       const res = await categorieslist()
       Object.keys(res).length == 1 ? this.$message.error(res.msg) : ''
-      console.log(res.data)
+      // console.log(res.data)
       this.pashlist = res.data
     },
     ptahandleChange() {
@@ -158,10 +158,26 @@ export default {
       }
     },
     addcat() {
-      console.log(this.addcatfrom)
+      this.$refs.ruleForm.validate(async val => {
+        if (!val) return
+        const res = await categoriesadd(this.addcatfrom)
+        Object.keys(res).length == 1 ? this.$message.error(res.msg) : ''
+        this.catelis()
+        this.catadd = false
+      })
+    },
+    addScaties() {
+      this.$refs.ruleForm.resetFields()
+      this.pashli = []
+      this.addcatfrom.cat_pid = 0
+      this.addcatfrom.cat_level = 0
     },
   },
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.el-cascader {
+  width: 100%;
+}
+</style>
