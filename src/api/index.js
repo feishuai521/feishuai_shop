@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-29 15:33:29
- * @LastEditTime: 2022-04-01 10:38:47
+ * @LastEditTime: 2022-04-03 20:38:49
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -127,6 +127,67 @@ export async function categoriesacc(id, dtas) {
 export async function categoriesadds(id, dtas) {
   const { data: res } = await axios.post(`categories/${id}/attributes`, dtas)
   if (res.meta.status !== 201)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+//添加角色用户
+export async function adduser(dtas) {
+  const { data: res } = await axios.post('roles', dtas)
+  if (res.meta.status !== 201)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+//获取角色用户id下的信息
+export async function getuser(id) {
+  const { data: res } = await axios.get(`roles/${id}`)
+  if (res.meta.status !== 200)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+//提交修改角色用户信息
+export async function putuser(id, dtas) {
+  console.log(id, dtas)
+  const { data: res } = await axios.put(`roles/${id}`, dtas)
+  if (res.meta.status !== 200)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+//删除提交修改角色用户信息
+export async function deluser(id) {
+  const { data: res } = await axios.delete(`roles/${id}`)
+  if (res.meta.status !== 200)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+//根据商品分类id获取商品分类信息
+export async function getcate(id) {
+  const { data: res } = await axios.get(`categories/${id}`)
+  if (res.meta.status !== 200)
     return {
       msg: res.meta.msg,
     }

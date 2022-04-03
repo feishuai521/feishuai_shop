@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-27 19:16:56
- * @LastEditTime: 2022-03-31 08:38:33
+ * @LastEditTime: 2022-04-03 17:12:50
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -44,6 +44,7 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+//生成验证
 Vue.use(ElementUI)
 // ElementUI
 Vue.config.productionTip = false

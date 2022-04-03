@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-31 08:05:18
- * @LastEditTime: 2022-03-31 19:41:01
+ * @LastEditTime: 2022-04-03 20:44:58
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -39,8 +39,8 @@
           <el-tag type="success" v-else-if="scope.row.cat_level === 1">二级</el-tag>
           <el-tag type="warning" v-else>三级</el-tag>
         </template>
-        <template slot="opt">
-          <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+        <template slot="opt" slot-scope="scope">
+          <el-button type="primary" icon="el-icon-edit" size="mini" @click="shopcate(scope.row)">编辑</el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
         </template>
       </Zk-Table>
@@ -118,6 +118,8 @@ export default {
       },
       pashlist: [],
       pashli: [],
+      //查询id获取数据
+      catidd: 0,
     }
   },
   created() {
@@ -171,6 +173,10 @@ export default {
       this.pashli = []
       this.addcatfrom.cat_pid = 0
       this.addcatfrom.cat_level = 0
+    },
+    //查询id获取数据
+    shopcate(row) {
+      this.catidd = row.cat_id
     },
   },
 }
