@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-31 08:05:18
- * @LastEditTime: 2022-04-03 20:44:58
+ * @LastEditTime: 2022-04-04 10:05:11
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -41,7 +41,7 @@
         </template>
         <template slot="opt" slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" size="mini" @click="shopcate(scope.row)">编辑</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="delcate(scope.row.cat_id)">删除</el-button>
         </template>
       </Zk-Table>
       <el-pagination
@@ -77,11 +77,22 @@
         <el-button type="primary" @click="addcat">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="修改分类" :visible.sync="xgcatddfasle" width="50%">
+      <el-form ref="xgcatddRef" :model="xgcatddForm" label-width="100px" :rules="xgcatddForms">
+        <el-form-item label="分类名称" prop="cat_name">
+          <el-input v-model="xgcatddForm.cat_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="xgcatddfasle = false">取 消</el-button>
+        <el-button type="primary" @click="xgcatddadd">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { catelist, categorieslist, categoriesadd } from '../../api'
+import { catelist, categorieslist, categoriesadd, getcate, putcate, delcates } from '../../api'
 
 export default {
   data() {
@@ -120,6 +131,18 @@ export default {
       pashli: [],
       //查询id获取数据
       catidd: 0,
+      xgcatddfasle: false,
+      //修改分类内容
+      xgcatddForm: {
+        cat_name: '',
+      },
+      //校验分类内容
+      xgcatddForms: {
+        cat_name: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' },
+          { min: 3, max: 8, message: '长度在 3 到 8 个', trigger: 'blur' },
+        ],
+      },
     }
   },
   created() {
@@ -175,8 +198,34 @@ export default {
       this.addcatfrom.cat_level = 0
     },
     //查询id获取数据
-    shopcate(row) {
+    async shopcate(row) {
       this.catidd = row.cat_id
+      const res = await getcate(this.catidd)
+      Object.keys(res).length == 1 ? this.$message.error(res.msg) : ''
+      this.xgcatddForm.cat_name = res.data.cat_name
+      this.xgcatddfasle = true
+    },
+    //修改分类内容
+    xgcatddadd() {
+      this.$refs.xgcatddRef.validate(async val => {
+        if (!val) return
+        const res = await putcate(this.catidd, this.xgcatddForm)
+        Object.keys(res).length == 1 ? this.$message.error(res.msg) : this.$message.success('修改成功')
+        this.catelis()
+        this.xgcatddfasle = false
+      })
+    },
+    //删除分类
+    async delcate(row) {
+      const res = await this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).catch(err => err)
+      if (res !== 'confirm') return this.$message.error('取消删除')
+      const ress = await delcates(row)
+      Object.keys(ress).length == 1 ? this.$message.error(ress.msg) : this.$message.success('删除成功')
+      this.catelis()
     },
   },
 }

@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-29 15:33:29
- * @LastEditTime: 2022-04-03 20:38:49
+ * @LastEditTime: 2022-04-04 09:55:00
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -11,7 +11,11 @@ import axios from './post'
 //判断失败与成功
 // Object.keys(arr).length == 1 ? this.$message.error(arr.msg) : this.$message.success(arr.msg)
 
-// Vue.use(ElementUI)
+// Vue.use(ElementUI)\
+//获取数据展现给return
+export function sjzs(res, dk) {
+  console.log(res, dk)
+}
 export async function roles() {
   const { data: res } = await axios({
     url: 'roles',
@@ -187,6 +191,31 @@ export async function deluser(id) {
 //根据商品分类id获取商品分类信息
 export async function getcate(id) {
   const { data: res } = await axios.get(`categories/${id}`)
+  if (res.meta.status !== 200)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+
+//修改商品分类信息
+export async function putcate(id, dtas) {
+  const { data: res } = await axios.put(`categories/${id}`, dtas)
+  if (res.meta.status !== 200)
+    return {
+      msg: res.meta.msg,
+    }
+  return {
+    msg: res.meta.msg,
+    data: res.data,
+  }
+}
+//删除商品分类信息
+export async function delcates(id) {
+  const { data: res } = await axios.delete(`categories/${id}`)
   if (res.meta.status !== 200)
     return {
       msg: res.meta.msg,
