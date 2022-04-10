@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-29 15:19:02
- * @LastEditTime: 2022-04-03 20:28:46
+ * @LastEditTime: 2022-04-09 08:15:33
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -178,6 +178,7 @@ export default {
   },
   created() {
     this.roleslist()
+    console.log(this.roleslist())
     // this.desfkey(this.roles, this.desfkey)
   },
   methods: {
@@ -185,7 +186,7 @@ export default {
       const res = await roles()
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.roles = res.data
-      // console.log(res)
+      console.log(res)
     },
     async removeid(id, idd) {
       console.log(id, idd)

@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-31 19:44:44
- * @LastEditTime: 2022-04-05 16:02:51
+ * @LastEditTime: 2022-04-10 20:32:48
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -28,15 +28,17 @@
           <el-table :data="manytabledata" style="width: 100%; margin: 10px 0" border stripe>
             <el-table-column type="expand" label="#">
               <template slot-scope="scope"
-                ><el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index">{{ item }}</el-tag>
+                ><el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index" @close="tagClose(index, scope.row)">{{
+                  item
+                }}</el-tag>
                 <el-input
                   class="input-new-tag"
-                  v-if="inputVisible"
-                  v-model="inputValue"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
                   ref="saveTagInput"
                   size="small"
-                  @keyup.enter.native="handleInputConfirm"
-                  @blur="handleInputConfirm"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
                 >
                 </el-input>
                 <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
@@ -57,7 +59,20 @@
           <el-table :data="omlytabdata" style="width: 100%; margin: 10px 0" border stripe>
             <el-table-column type="expand" label="#">
               <template slot-scope="scope"
-                ><el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index">{{ item }}</el-tag>
+                ><el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index" @close="tagClose(index, scope.row)">{{
+                  item
+                }}</el-tag>
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
               </template>
             </el-table-column>
             <el-table-column type="index" label="ID"> </el-table-column>
@@ -186,14 +201,16 @@ export default {
     async parlists() {
       if (this.selectedopt.length !== 3) {
         this.selectedopt = []
+        this.manyTabledata = []
+        this.omlytabdata = []
         return
       }
       const res = await categoriesacc(this.cateid, { params: { sel: this.activeName } })
       Object.keys(res).length == 1 ? this.$message.error(res.msg) : ''
       res.data.forEach(item => {
         item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
-        this.inputVisible = false
-        this.inputValue = ''
+        item.inputVisible = false
+        item.inputValue = ''
       })
       console.log(res.data)
       if (this.activeName === 'many') {
@@ -252,14 +269,40 @@ export default {
       this.parlists()
     },
     //keyup event native
-    handleInputConfirm() {},
-    showInput(id) {
-      console.log(id)
-      this.inputVisible = true
-      //获取input焦点
+    async handleInputConfirm(row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+        return
+      }
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
+      const res = await putcatesadd(this.cateid, row.attr_id, {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.attr_vals.join(' '),
+      })
+      Object.keys(res).length == 1 ? this.$message.error(res.msg) : this.$message.success(res.msg)
+      // console.log(res)
+      console.log(row)
+    },
+    showInput(row) {
+      row.inputVisible = true
+      //自动获取焦点
       this.$nextTick(() => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
+    },
+    async tagClose(row, arr) {
+      console.log(row, arr)
+      arr.attr_vals.splice(row, 1)
+      const res = await putcatesadd(this.cateid, arr.attr_id, {
+        attr_name: arr.attr_name,
+        attr_sel: arr.attr_sel,
+        attr_vals: arr.attr_vals.join(' '),
+      })
+      Object.keys(res).length == 1 ? this.$message.error(res.msg) : this.$message.success(res.msg)
     },
   },
 }
@@ -272,5 +315,8 @@ export default {
 .input-new-tag {
   width: 100px;
   margin: 15px;
+}
+.el-button {
+  margin: 0 15px;
 }
 </style>
