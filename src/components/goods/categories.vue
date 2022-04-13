@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-03-31 08:05:18
- * @LastEditTime: 2022-04-04 10:05:11
+ * @LastEditTime: 2022-04-11 20:46:29
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -140,7 +140,7 @@ export default {
       xgcatddForms: {
         cat_name: [
           { required: true, message: '请输入分类名称', trigger: 'blur' },
-          { min: 3, max: 8, message: '长度在 3 到 8 个', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个', trigger: 'blur' },
         ],
       },
     }

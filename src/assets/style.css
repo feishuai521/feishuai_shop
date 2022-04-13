@@ -10,3 +10,12 @@ html,
 .el-card {
   margin: 20px 0;
 }
+.el-table {
+  margin: 20px 0;
+}
+.quill-editor {
+  min-height: 300px;
+}
+.ql-container {
+  height: 300px !important;
+}

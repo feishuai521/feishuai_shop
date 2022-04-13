@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-29 15:33:29
- * @LastEditTime: 2022-04-05 15:29:15
+ * @LastEditTime: 2022-04-13 08:45:13
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -12,6 +12,7 @@ import axios from './post'
 // Object.keys(arr).length == 1 ? this.$message.error(arr.msg) : this.$message.success(arr.msg)
 //获取数据展现给return
 export function sjzs(res, dk) {
+  // console.log(res)
   if (res.meta.status !== dk)
     return {
       msg: res.meta.msg,
@@ -123,5 +124,27 @@ export async function putcatesadd(id, attrId, dtas) {
 //删除商品分类信息  属性
 export async function delcatesadd(id, attrId) {
   const { data: res } = await axios.delete(`categories/${id}/attributes/${attrId}`)
+  return sjzs(res, 200)
+}
+// 商品列表数据 分页
+export async function getgoods(dtas) {
+  const { data: res } = await axios.get('goods', dtas)
+  return sjzs(res, 200)
+}
+//删除商品列表数据  分页
+export async function delgoods(id) {
+  console.log(id)
+  const { data: res } = await axios.delete(`goods/${id}`)
+  console.log(res)
+  return sjzs(res, 200)
+}
+//商品列表数据
+export async function categorislist() {
+  const { data: res } = await axios.get('categories')
+  return sjzs(res, 200)
+}
+//获取数据库中的商品分类信息
+export async function getcatelist(id, datas) {
+  const { data: res } = await axios.get(`categories/${id}/attributes`, datas)
   return sjzs(res, 200)
 }

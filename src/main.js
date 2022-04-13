@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-27 19:16:56
- * @LastEditTime: 2022-04-03 17:12:50
+ * @LastEditTime: 2022-04-13 16:38:03
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -13,7 +13,13 @@ import router from './router'
 import store from './store'
 import './assets/style.css'
 import ZkTable from 'vue-table-with-tree-grid'
+import VueQuillEditor from 'vue-quill-editor'
 
+import 'quill/dist/quill.core.css' // import styles
+import 'quill/dist/quill.snow.css' // for snow theme
+import 'quill/dist/quill.bubble.css' // for bubble theme
+
+Vue.use(VueQuillEditor /* { default global options } */)
 Vue.component('Zk-Table', ZkTable)
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
@@ -49,6 +55,17 @@ Vue.use(ElementUI)
 // ElementUI
 Vue.config.productionTip = false
 // import Vue from 'vue'
+Vue.filter('dateFormat', function (originVal) {
+  // console.log(originVal)
+  const dt = new Date(originVal)
+  const y = dt.getFullYear()
+  const m = (dt.getMonth() + 1 + '').padStart(2, '0')
+  const d = (dt.getDate() + '').padStart(2, '0')
+  const hh = (dt.getHours() + '').padStart(2, '0')
+  const mm = (dt.getMinutes() + '').padStart(2, '0')
+  const ss = (dt.getSeconds() + '').padStart(2, '0')
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+})
 
 new Vue({
   router,
