@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-04-11 19:18:55
- * @LastEditTime: 2022-04-13 17:21:44
+ * @LastEditTime: 2022-04-14 09:32:37
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -87,8 +87,8 @@
 </template>
 
 <script>
-import { categorislist, getcatelist } from '../../api'
-
+import { categorislist, getcatelist, goodsadd } from '../../api'
+import _ from 'lodash'
 export default {
   data() {
     return {
@@ -101,6 +101,7 @@ export default {
         goods_cat: [],
         pics: [],
         goods_introduce: '',
+        attrs: [],
       },
       catelist: [],
       Addrules: {
@@ -193,10 +194,24 @@ export default {
       this.AddForm.pics.push(picimg)
     },
     add() {
-      this.$refs.AddFormRef.validate(val => {
+      this.$refs.AddFormRef.validate(async val => {
         if (!val) return this.$message.error('请填写完整信息')
-        this.AddForm.goods_cat = this.AddForm.goods_cat.join(',')
-        console.log(this.AddForm)
+        let from = _.cloneDeep(this.AddForm)
+
+        this.AddForm.goods_cat = from.goods_cat.join(',')
+        this.ManyDAta.forEach(item => {
+          const ss = { attr_id: item.attr_id, attr_value: item.attr_vals.join(' ') }
+          this.AddForm.attrs.push(ss)
+        })
+        this.OnlyDAta.forEach(item => {
+          const ss = { attr_id: item.attr_id, attr_value: item.attr_vals }
+          this.AddForm.attrs.push(ss)
+        })
+        from.attrs = this.AddForm.attrs
+        const res = await goodsadd(this.AddForm)
+        if (Object.keys(res).length == 1) return this.$message.error(res.msg)
+        this.$message.success('添加成功')
+        this.$router.push('/goods')
       })
     },
   },
