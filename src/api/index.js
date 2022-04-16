@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-29 15:33:29
- * @LastEditTime: 2022-04-14 09:32:10
+ * @LastEditTime: 2022-04-14 16:33:51
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -150,9 +150,16 @@ export async function getcatelist(id, datas) {
 }
 //添加商品分类信息
 export async function goodsadd(dtas) {
-  console.log(dtas)
-
   const { data: res } = await axios.post('goods', dtas)
-  console.log(res)
   return sjzs(res, 201)
+}
+//根据商品分类id获取商品分类信息
+export async function getgoodslist(id) {
+  const { data: res } = await axios.get(`goods/${id}`)
+  return sjzs(res, 200)
+}
+//编辑商品分类信息
+export async function putgoods(id, dtas) {
+  const { data: res } = await axios.put(`goods/${id}`, dtas)
+  return sjzs(res, 200)
 }

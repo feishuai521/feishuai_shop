@@ -1,7 +1,7 @@
 <!--
  * @Author: 飞帅
  * @Date: 2022-04-11 19:18:55
- * @LastEditTime: 2022-04-14 09:32:37
+ * @LastEditTime: 2022-04-16 09:18:01
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * The copyright belongs to Fei Shuai
@@ -11,10 +11,10 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/webHone' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-      <el-breadcrumb-item>添加商品</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ !id ? '添加商品' : '编辑商品' }}</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <el-alert title="添加商品信息" type="info" center show-icon> </el-alert>
+      <el-alert :title="!id ? '添加商品信息' : '编辑商品信息'" type="info" center show-icon> </el-alert>
       <el-steps :space="200" :active="activezt - 0" finish-status="success" align-center>
         <el-step title="基本信息"></el-step>
         <el-step title="商品参数"></el-step>
@@ -65,6 +65,7 @@
               :action="urcupload"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :file-list="editpics"
               list-type="picture"
               :headers="headersObj"
               :on-success="hancndSuccess"
@@ -75,7 +76,7 @@
           </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">
             <quill-editor v-model="AddForm.goods_introduce" />
-            <el-button type="primary" style="margin: 10px 0" @click="add">添加商品</el-button>
+            <el-button type="primary" style="margin: 10px 0" @click="isadd">{{ !id ? '添加商品' : '编辑商品' }}</el-button>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -87,9 +88,14 @@
 </template>
 
 <script>
-import { categorislist, getcatelist, goodsadd } from '../../api'
+import { categorislist, getcatelist, goodsadd, getgoodslist, putgoods } from '../../api'
 import _ from 'lodash'
 export default {
+  props: {
+    id: {
+      type: String,
+    },
+  },
   data() {
     return {
       activezt: '0',
@@ -124,15 +130,22 @@ export default {
       },
       previewImage: '',
       picdialogVisible: false,
+      //编辑商品图片信息
+      editpics: [],
     }
   },
   computed: {
     cateid() {
       return this.AddForm.goods_cat.length === 3 ? this.AddForm.goods_cat[this.AddForm.goods_cat.length - 1] : null
     },
+    isadd() {
+      return !this.id ? this.add : this.editeadd
+    },
   },
   created() {
+    // console.log(this.id)
     this.getcatelist()
+    this.getcateidlist()
   },
   methods: {
     // 获取分类
@@ -140,6 +153,35 @@ export default {
       const res = await categorislist()
       Object.keys(res).length == 1 ? this.$message.error(res.msg) : ''
       this.catelist = res.data
+    },
+    //获取编辑id数据在判断
+    async getcateidlist() {
+      if (!this.id) return
+      const res = await getgoodslist(this.id)
+      Object.keys(res).length == 1 ? this.$message.error(res.msg) : ''
+      console.log(res)
+      let from = _.cloneDeep(res.data)
+      from.goods_cat = from.goods_cat.split(',').map(item => Number(item))
+      console.log(from.pics)
+      this.editpics = from.pics.map(item => {
+        return { name: item.pics_big, url: item.pics_big_url, pics_id: item.pics_id }
+      })
+      // from.attrs.filter(item => (item.attr_sel === 'only' ? this.OnlyDAta.push(item) : this.ManyDAta.push(item)))
+      // this.OnlyDAta.forEach(
+      //   item => (item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(',') || item.attr_vals.split(' '))
+      // )
+      from.attrs.filter(item => {
+        if (item.attr_sel === 'only') {
+          return this.OnlyDAta.push(item)
+        } else {
+          return this.ManyDAta.push(item)
+        }
+      })
+
+      this.AddForm = from
+      console.log(from)
+
+      console.log(this.AddForm)
     },
     handleChange() {
       if (this.AddForm.goods_cat.length !== 3) return (this.AddForm.goods_cat = [])
@@ -149,6 +191,7 @@ export default {
       // console.log('即将离开标签页的名字: ', oldActiveName)
       // console.log('即将进入标签页的名字: ', activeName)
       // return false
+
       if ((oldActiveName === '0' && this.AddForm.goods_cat.length !== 3) || this.AddForm.goods_name === '') {
         this.$message.error('请先选择商品分类! 或 填写商品名称')
         return false
@@ -166,7 +209,7 @@ export default {
         res.data.forEach(
           item => (item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(',') || item.attr_vals.split(' '))
         )
-        this.ManyDAta = res.data
+        if (!this.id) return (this.ManyDAta = res.data)
       } else if (this.activezt === '2') {
         const res = await getcatelist(this.cateid, {
           params: { sel: 'only' },
@@ -174,43 +217,70 @@ export default {
         if (Object.keys(res).length == 1) return this.$message.error(res.msg)
         console.log(res)
 
-        this.OnlyDAta = res.data
+        if (!this.id) return (this.OnlyDAta = res.data)
       }
     },
     handlePreview(res) {
-      console.log(res)
-      this.previewImage = res.response.data.url
+      //上传图片判断了一下路经
+      this.previewImage = res.url ? res.url : res.response.data.url
       this.picdialogVisible = true
     },
     handleRemove(res) {
-      const picres = res.response.data.tmp_path
-      const i = this.AddForm.pics.findIndex(item => item.pic === picres)
-      this.AddForm.pics.splice(i, 1)
+      console.log(res)
+      this.AddForm.pics.splice(
+        this.AddForm.pics.findIndex(item => item.pic === res.pics_id),
+        1
+      )
+
+      // console.log(this.editpics)
     },
     hancndSuccess(res) {
       console.log(res)
-
       const picimg = { pic: res.data.tmp_path }
       this.AddForm.pics.push(picimg)
     },
     add() {
       this.$refs.AddFormRef.validate(async val => {
         if (!val) return this.$message.error('请填写完整信息')
-        let from = _.cloneDeep(this.AddForm)
-
-        this.AddForm.goods_cat = from.goods_cat.join(',')
+        const from = _.cloneDeep(this.AddForm)
+        from.goods_cat = from.goods_cat.join(',')
+        // console.log(from)
         this.ManyDAta.forEach(item => {
-          const ss = { attr_id: item.attr_id, attr_value: item.attr_vals.join(' ') }
-          this.AddForm.attrs.push(ss)
+          const newinfo = {
+            attr_id: item.attr_id,
+            attr_vals: item.attr_vals.join(' '),
+          }
+          this.AddForm.attrs.push(newinfo)
         })
         this.OnlyDAta.forEach(item => {
-          const ss = { attr_id: item.attr_id, attr_value: item.attr_vals }
-          this.AddForm.attrs.push(ss)
+          const newinfo = {
+            attr_id: item.attr_id,
+            attr_vals: item.attr_vals,
+          }
+          this.AddForm.attrs.push(newinfo)
         })
         from.attrs = this.AddForm.attrs
-        const res = await goodsadd(this.AddForm)
+        console.log(from)
+        const res = await goodsadd(from)
         if (Object.keys(res).length == 1) return this.$message.error(res.msg)
         this.$message.success('添加成功')
+
+        this.$router.push('/goods')
+      })
+    },
+    editeadd() {
+      // putgoods
+      this.$refs.AddFormRef.validate(async val => {
+        if (!val) return this.$message.error('请填写完整信息')
+        let from = _.cloneDeep(this.AddForm)
+        from.goods_cat = from.goods_cat.join(',')
+
+        from.attrs = this.AddForm.attrs
+        console.log(from)
+
+        const res = await putgoods(this.id, from)
+        if (Object.keys(res).length == 1) return this.$message.error(res.msg)
+        this.$message.success('修改成功')
         this.$router.push('/goods')
       })
     },
