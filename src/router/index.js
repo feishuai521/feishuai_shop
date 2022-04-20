@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-27 19:16:56
- * @LastEditTime: 2022-04-14 10:37:11
+ * @LastEditTime: 2022-04-18 10:21:46
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -68,6 +68,17 @@ const routes = [
         name: 'goodsedit',
         props: true,
         component: () => import('../components/goods/Add.vue'),
+      },
+      {
+        path: '/orders',
+        name: 'orders',
+        component: () => import('../components/orders/index.vue'),
+      },
+      {
+        path: '/reports',
+        name: 'reports',
+        // props: true,
+        component: () => import('../components/reports/reports.vue'),
       },
     ],
   },

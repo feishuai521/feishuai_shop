@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-28 09:56:25
- * @LastEditTime: 2022-04-03 17:12:52
+ * @LastEditTime: 2022-04-18 14:54:07
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -9,6 +9,7 @@
 
 import axios from 'axios'
 axios.defaults.baseURL = 'https://lianghj.top:8888/api/private/v1/'
+// axios.defaults.baseURL = 'http://api.shop.feishuai521.cn/api/private/v1/'
 // 添加请求拦截器
 axios.interceptors.request.use(
   function (config) {

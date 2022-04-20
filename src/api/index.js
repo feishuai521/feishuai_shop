@@ -1,7 +1,7 @@
 /**
  * @Author: 飞帅
  * @Date: 2022-03-29 15:33:29
- * @LastEditTime: 2022-04-14 16:33:51
+ * @LastEditTime: 2022-04-18 10:36:00
  * @LastEditors: feishuai
  * @Description: blog.feishuai521.cn`
  * @The copyright belongs to Fei Shuai
@@ -161,5 +161,20 @@ export async function getgoodslist(id) {
 //编辑商品分类信息
 export async function putgoods(id, dtas) {
   const { data: res } = await axios.put(`goods/${id}`, dtas)
+  return sjzs(res, 200)
+}
+//获取订单列表数据
+export async function getorderlist(dtas) {
+  const { data: res } = await axios.get('orders', dtas)
+  return sjzs(res, 200)
+}
+//查看物流信息
+export async function getorderlistwuliu(id) {
+  const { data: res } = await axios.get(`/kuaidi/${id}`)
+  return sjzs(res, 200)
+}
+//数据统计
+export async function getorderlisttongji() {
+  const { data: res } = await axios.get('reports/type/1')
   return sjzs(res, 200)
 }
